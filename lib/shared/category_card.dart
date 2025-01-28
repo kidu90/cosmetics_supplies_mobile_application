@@ -18,7 +18,7 @@ class _CategoryCardState extends State<CategoryCard> {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: _categories.length,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.only(right: 50),

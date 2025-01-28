@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(20.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -42,7 +42,29 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            CategoryCard()
+            CategoryCard(),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Newest Arrivals",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w600),
+                      ),
+                      Icon(
+                        Icons.tune,
+                        size: 25,
+                        color: Colors.black,
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            )
           ],
         )));
   }
