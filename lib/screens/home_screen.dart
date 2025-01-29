@@ -84,11 +84,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              ProductCard(
-                  image: 'assets/body lotion.jpeg',
-                  name: 'Body Loaction',
-                  price: 200,
-                  originalPrice: 250)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    ProductCard(
+                        image: 'assets/body lotion.jpeg',
+                        name: 'Body Loaction',
+                        price: 200,
+                        originalPrice: 250),
+                    ProductCard(
+                        image: 'assets/body lotion.jpeg',
+                        name: 'Face Cream',
+                        price: 150,
+                        originalPrice: 200),
+                    ProductCard(
+                        image: 'assets/body lotion.jpeg',
+                        name: 'Face Cream',
+                        price: 150,
+                        originalPrice: 200),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
