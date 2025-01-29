@@ -1,5 +1,6 @@
 import 'package:cosmetic_supplies_application/shared/category_card.dart';
 import 'package:cosmetic_supplies_application/shared/bottom_nav.dart';
+import 'package:cosmetic_supplies_application/shared/product_card.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -83,6 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+              ProductCard(
+                  image: 'assets/body lotion.jpeg',
+                  name: 'Body Loaction',
+                  price: 200,
+                  originalPrice: 250)
             ],
           ),
         ),
