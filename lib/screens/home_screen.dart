@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text(''),
       ),
-      body: const SafeArea(
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icon(
                       Icons.search,
                       size: 40,
-                      color: Colors.black,
+                      color: Theme.of(context).iconTheme.color,
                     ),
                   ],
                 ),

@@ -1,5 +1,5 @@
-import 'package:cosmetic_supplies_application/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cosmetic_supplies_application/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,15 +8,36 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Cosmetic Supplies',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-        useMaterial3: true,
+        brightness: Brightness.light,
+        primarySwatch: Colors.pink,
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          titleTextStyle: TextStyle(color: Colors.black, fontSize: 20),
+          iconTheme: IconThemeData(color: Colors.black),
+        ),
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.pink,
+        scaffoldBackgroundColor: Colors.black,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black,
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white70),
+        ),
+      ),
+      themeMode: ThemeMode.system, // Adapts to system theme
       home: const HomeScreen(),
     );
   }

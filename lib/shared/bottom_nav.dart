@@ -31,21 +31,29 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => _screens[index]),
-      );
+      ).then((_) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Get the current theme to adjust colors based on dark/light mode
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return BottomNavigationBar(
       currentIndex: _selectedIndex,
       onTap: _onItemTapped,
       type: BottomNavigationBarType.fixed,
-      selectedItemColor: Colors.black,
-      unselectedItemColor: Colors.grey,
+      selectedItemColor: isDarkMode ? Colors.white : Colors.black,
+      unselectedItemColor: isDarkMode ? Colors.grey : Colors.black45,
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),
