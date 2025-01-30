@@ -15,17 +15,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _screens = [
-    HomeScreen(),
-    Cart(),
-    FavouriteScreen(),
-    ProfileScreen(),
-
-    // Your profile screen
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,21 +77,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    ProductCard(
-                        image: 'assets/images/body lotion.jpeg',
-                        name: 'Body Loaction',
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 12.0, right: 12.0, bottom: 12.0),
+                      child: ProductCard(
+                        image: 'assets/images/faceCream.jpg',
+                        name: 'Face Cream',
                         price: 200,
-                        originalPrice: 250),
-                    ProductCard(
-                        image: '',
-                        name: 'Face Cream',
+                        originalPrice: 250,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0, bottom: 12.0),
+                      child: ProductCard(
+                        image: 'assets/images/mattlips.webp',
+                        name: 'Matt Lipstick',
                         price: 150,
-                        originalPrice: 200),
-                    ProductCard(
-                        image: '',
-                        name: 'Face Cream',
+                        originalPrice: 200,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0, bottom: 12.0),
+                      child: ProductCard(
+                        image: 'assets/images/body lotion.jpeg',
+                        name: 'Body Lotion',
                         price: 150,
-                        originalPrice: 200),
+                        originalPrice: 200,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -124,9 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   children: [
                     OffersCard(
-                      image: 'assets/images/banner.jpg',
-                      name: 'Acure Body Lotion',
-                      subtitle: '50% off',
+                      image: 'assets/images/banner3.jpg',
+                      name: 'Face serum',
+                      subtitle: '50% OFF Today',
                     ),
                     OffersCard(
                       image: 'assets/images/banner2.jpg',
@@ -134,8 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       subtitle: 'Get 30% OFF on your first order',
                     ),
                     OffersCard(
-                      image: '',
-                      name: 'Face Cream',
+                      image: 'assets/images/banner.jpg',
+                      name: 'Acure Body Lotion',
                       subtitle: '30% off',
                     ),
                   ],
@@ -145,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavBar(), // Fixed at the bottom
+      bottomNavigationBar: BottomNavBar(currentIndex: 0),
     );
   }
 }
