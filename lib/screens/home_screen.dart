@@ -89,17 +89,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   children: [
                     ProductCard(
-                        image: 'assets/body lotion.jpeg',
+                        image: 'assets/images/body lotion.jpeg',
                         name: 'Body Loaction',
                         price: 200,
                         originalPrice: 250),
                     ProductCard(
-                        image: 'assets/body lotion.jpeg',
+                        image: '',
                         name: 'Face Cream',
                         price: 150,
                         originalPrice: 200),
                     ProductCard(
-                        image: 'assets/body lotion.jpeg',
+                        image: '',
                         name: 'Face Cream',
                         price: 150,
                         originalPrice: 200),
@@ -116,7 +116,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
-                    OffersCard(),
+                  ],
+                ),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    OffersCard(
+                      image: 'assets/images/banner.jpg',
+                      name: 'Acure Body Lotion',
+                      subtitle: '50% off',
+                    ),
+                    OffersCard(
+                      image: 'assets/images/banner2.jpg',
+                      name: 'Makeup set',
+                      subtitle: 'Get 30% OFF on your first order',
+                    ),
+                    OffersCard(
+                      image: '',
+                      name: 'Face Cream',
+                      subtitle: '30% off',
+                    ),
                   ],
                 ),
               ),
