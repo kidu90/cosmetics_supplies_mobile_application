@@ -14,7 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   // Static credentials
-  final String correctEmail = "text@gmail.com";
+  final String correctEmail = "test@gmail.com";
   final String correctPassword = "masha123";
 
   void _login() {
@@ -24,17 +24,27 @@ class _LoginScreenState extends State<LoginScreen> {
     print("Entered Email: $email"); // Debugging
     print("Entered Password: $password");
 
-    if (email == correctEmail && password == correctPassword) {
-      print("Login successful! Navigating to HomeScreen...");
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
-    } else {
-      print("Invalid credentials entered.");
+    try {
+      if (email == correctEmail && password == correctPassword) {
+        print("Login successful! Navigating to HomeScreen...");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      } else {
+        print("Invalid email or password");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Invalid email or password"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print("Error during login: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Invalid email or password"),
+        SnackBar(
+          content: Text("An error occurred: $e"),
           backgroundColor: Colors.red,
         ),
       );
@@ -48,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -86,8 +96,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomTextField(
                   label: 'Password',
                   placeholder: 'Enter your password',
-                  obscureText: true,
                   controller: passwordController,
+                  obscureText: true,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 50),
