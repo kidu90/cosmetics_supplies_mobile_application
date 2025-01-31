@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.black),
         ),
       ),
+      // Dark theme
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.pink,

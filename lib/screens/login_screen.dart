@@ -17,12 +17,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final String correctEmail = "test@gmail.com";
   final String correctPassword = "masha123";
 
+// Login function
   void _login() {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
-    print("Entered Email: $email");
-    print("Entered Password: $password");
+    //print("Entered Email: $email");
+    //print("Entered Password: $password");
 
     try {
       if (email == correctEmail && password == correctPassword) {

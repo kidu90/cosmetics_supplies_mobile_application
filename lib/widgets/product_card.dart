@@ -6,7 +6,7 @@ class ProductCard extends StatelessWidget {
   final String name;
   final double price;
   final double originalPrice;
-  final String description; // Add description
+  final String description;
 
   const ProductCard({
     super.key,
@@ -14,17 +14,15 @@ class ProductCard extends StatelessWidget {
     required this.name,
     required this.price,
     required this.originalPrice,
-    required this.description, // Add description to constructor
+    required this.description,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 8.0), // Add horizontal spacing
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: GestureDetector(
         onTap: () {
-          // Navigate to the product detail screen when the card is tapped
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -33,7 +31,7 @@ class ProductCard extends StatelessWidget {
                       name: name,
                       price: price,
                       originalPrice: originalPrice,
-                      description: description, // Pass description
+                      description: description,
                     )),
           );
         },

@@ -5,13 +5,13 @@ class CustomTextField extends StatelessWidget {
   final String placeholder;
   final bool obscureText;
   final TextInputType keyboardType;
-  final TextEditingController controller; // Added controller
+  final TextEditingController controller;
 
   const CustomTextField({
     super.key,
     required this.label,
     required this.placeholder,
-    required this.controller, // Required controller
+    required this.controller,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
   });
@@ -30,7 +30,7 @@ class CustomTextField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: controller, // Assign controller to TextFormField
+          controller: controller,
           decoration: InputDecoration(
             hintText: placeholder,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),

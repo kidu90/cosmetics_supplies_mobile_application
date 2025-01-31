@@ -1,7 +1,7 @@
 import 'package:cosmetic_supplies_application/widgets/profile_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:cosmetic_supplies_application/widgets/bottom_nav.dart';
-import 'package:cosmetic_supplies_application/screens/login_screen.dart'; // Import the login screen
+import 'package:cosmetic_supplies_application/screens/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,15 +11,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // You can add any logout logic here (e.g., clearing stored tokens)
-
+  // Logout function
   void _logout() {
-    // Navigate to the login screen
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) =>
-              LoginScreen()), // Assuming you have a LoginScreen widget
+      MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
 
@@ -50,8 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ProfileMenu(title: 'Help Center'),
                   ProfileMenu(
                     title: 'Log Out',
-                    onTap:
-                        _logout, // Pass the logout function to the ProfileMenu
+                    onTap: _logout,
                   ),
                 ],
               ),
