@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
-    print("Entered Email: $email"); // Debugging
+    print("Entered Email: $email");
     print("Entered Password: $password");
 
     try {
@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _login, // Call the login function
+                      onPressed: _login,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey,
                         padding: const EdgeInsets.symmetric(vertical: 16),

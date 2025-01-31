@@ -61,7 +61,6 @@ class ProductDetailedScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Add more product details if needed
                   const Text('Product details will go here.'),
                 ],
               ),
