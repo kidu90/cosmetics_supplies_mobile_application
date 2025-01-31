@@ -63,13 +63,66 @@ class ProductDetailedScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Display the description here
                   Text(
                     description,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black87,
                     ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.grey[200],
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.remove),
+                                  color: Colors.grey.shade500,
+                                  splashRadius: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  "1", // Default quantity
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.add),
+                                  color: Colors.grey.shade500,
+                                  splashRadius: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                        ),
+                        child: const Text(
+                          "Add to Cart",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
