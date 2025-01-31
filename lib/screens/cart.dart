@@ -11,10 +11,9 @@ class Cart extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: const Padding(
-        padding: EdgeInsets.all(16.0), // Added padding for proper alignment
+        padding: EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // Aligns text to the left
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Cart',
@@ -23,7 +22,7 @@ class Cart extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10), // Added spacing below the title
+            SizedBox(height: 10),
             CartItem(
               name: 'Lipstick',
               price: 200,
@@ -36,8 +35,10 @@ class Cart extends StatelessWidget {
               quantity: 2,
               image: 'assets/images/body lotion.jpeg',
             ),
-
-            CartSummary(),
+            Padding(
+              padding: EdgeInsets.only(top: 20),
+              child: CartSummary(),
+            ),
           ],
         ),
       ),

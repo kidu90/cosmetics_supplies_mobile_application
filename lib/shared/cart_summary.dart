@@ -26,7 +26,6 @@ class CartSummary extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Order Summary heading
           const Text(
             'Order Summary',
             style: TextStyle(
@@ -36,7 +35,6 @@ class CartSummary extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // Subtotal, Shipping, Total - set to 0
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(

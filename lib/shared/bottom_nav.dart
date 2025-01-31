@@ -44,7 +44,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    // Get the current theme to adjust colors based on dark/light mode
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return BottomNavigationBar(
