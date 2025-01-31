@@ -27,11 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               CategoryCard(),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              SingleChildScrollView(
+              const SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
@@ -105,10 +105,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         originalPrice: 200,
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0, bottom: 12.0),
+                      child: ProductCard(
+                        image: 'assets/images/body lotion.jpeg',
+                        name: 'Body Lotion',
+                        price: 150,
+                        originalPrice: 200,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0, bottom: 12.0),
+                      child: ProductCard(
+                        image: 'assets/images/body lotion.jpeg',
+                        name: 'Body Lotion',
+                        price: 150,
+                        originalPrice: 200,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.all(16),
                 child: Column(
                   children: [
@@ -121,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              SingleChildScrollView(
+              const SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
