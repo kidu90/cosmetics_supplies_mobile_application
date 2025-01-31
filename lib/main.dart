@@ -1,3 +1,4 @@
+import 'package:cosmetic_supplies_application/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cosmetic_supplies_application/screens/home_screen.dart';
 
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       themeMode: ThemeMode.system, // Adapts to system theme
-      home: const HomeScreen(),
+      home: const LoginScreen(),
     );
   }
 }
