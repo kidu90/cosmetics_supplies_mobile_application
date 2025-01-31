@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cosmetic_supplies_application/screens/home_screen.dart';
-import 'package:cosmetic_supplies_application/shared/text_field.dart';
+import 'package:cosmetic_supplies_application/widgets/text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

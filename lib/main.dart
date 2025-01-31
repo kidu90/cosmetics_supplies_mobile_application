@@ -1,6 +1,5 @@
 import 'package:cosmetic_supplies_application/screens/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:cosmetic_supplies_application/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());

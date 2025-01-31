@@ -1,10 +1,7 @@
-import 'package:cosmetic_supplies_application/screens/cart.dart';
-import 'package:cosmetic_supplies_application/screens/favourite_screen.dart';
-import 'package:cosmetic_supplies_application/screens/profile_screen.dart';
-import 'package:cosmetic_supplies_application/shared/category_card.dart';
-import 'package:cosmetic_supplies_application/shared/bottom_nav.dart';
-import 'package:cosmetic_supplies_application/shared/offers_card.dart';
-import 'package:cosmetic_supplies_application/shared/product_card.dart';
+import 'package:cosmetic_supplies_application/widgets/category_card.dart';
+import 'package:cosmetic_supplies_application/widgets/bottom_nav.dart';
+import 'package:cosmetic_supplies_application/widgets/offers_card.dart';
+import 'package:cosmetic_supplies_application/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
