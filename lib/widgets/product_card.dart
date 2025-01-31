@@ -6,6 +6,7 @@ class ProductCard extends StatelessWidget {
   final String name;
   final double price;
   final double originalPrice;
+  final String description; // Add description
 
   const ProductCard({
     super.key,
@@ -13,6 +14,7 @@ class ProductCard extends StatelessWidget {
     required this.name,
     required this.price,
     required this.originalPrice,
+    required this.description, // Add description to constructor
   });
 
   @override
@@ -31,6 +33,7 @@ class ProductCard extends StatelessWidget {
                       name: name,
                       price: price,
                       originalPrice: originalPrice,
+                      description: description, // Pass description
                     )),
           );
         },

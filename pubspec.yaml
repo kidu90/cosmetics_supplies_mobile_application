@@ -64,6 +64,8 @@ flutter:
     - assets/images/mattlips.webp
     - assets/images/faceCream.jpg
     - assets/images/banner3.jpg
+    - assets/images/eyeliner.jpg
+    - assets/images/shadow.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

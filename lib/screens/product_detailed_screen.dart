@@ -5,6 +5,7 @@ class ProductDetailedScreen extends StatelessWidget {
   final String name;
   final double price;
   final double originalPrice;
+  final String description;
 
   const ProductDetailedScreen({
     super.key,
@@ -12,6 +13,7 @@ class ProductDetailedScreen extends StatelessWidget {
     required this.name,
     required this.price,
     required this.originalPrice,
+    required this.description,
   });
 
   @override
@@ -61,7 +63,14 @@ class ProductDetailedScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  const Text('Product details will go here.'),
+                  // Display the description here
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
                 ],
               ),
             ),

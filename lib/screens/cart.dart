@@ -1,7 +1,7 @@
-import 'package:cosmetic_supplies_application/shared/cart_summary.dart';
+import 'package:cosmetic_supplies_application/widgets/cart_summary.dart';
 import 'package:flutter/material.dart';
-import 'package:cosmetic_supplies_application/shared/bottom_nav.dart';
-import 'package:cosmetic_supplies_application/shared/cart_item.dart';
+import 'package:cosmetic_supplies_application/widgets/bottom_nav.dart';
+import 'package:cosmetic_supplies_application/widgets/cart_item.dart';
 
 class Cart extends StatelessWidget {
   const Cart({super.key});

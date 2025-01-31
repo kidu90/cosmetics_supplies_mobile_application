@@ -1,6 +1,6 @@
-import 'package:cosmetic_supplies_application/shared/profile_menu.dart';
+import 'package:cosmetic_supplies_application/widgets/profile_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:cosmetic_supplies_application/shared/bottom_nav.dart';
+import 'package:cosmetic_supplies_application/widgets/bottom_nav.dart';
 import 'package:cosmetic_supplies_application/screens/login_screen.dart'; // Import the login screen
 
 class ProfileScreen extends StatefulWidget {

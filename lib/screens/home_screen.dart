@@ -80,8 +80,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ProductCard(
                         image: 'assets/images/faceCream.jpg',
                         name: 'Face Cream',
-                        price: 200,
-                        originalPrice: 250,
+                        price: 2000,
+                        originalPrice: 2500,
+                        description:
+                            "A luxurious face cream that deeply hydrates and nourishes your skin. Enriched with vitamins and antioxidants, it helps to reduce the appearance of fine lines and wrinkles, leaving your skin looking smooth and radiant. Suitable for all skin types, this cream is perfect for daily use to keep your skin healthy and glowing.",
                       ),
                     ),
                     Padding(
@@ -89,8 +91,32 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ProductCard(
                         image: 'assets/images/mattlips.webp',
                         name: 'Matt Lipstick',
-                        price: 150,
-                        originalPrice: 200,
+                        price: 1500,
+                        originalPrice: 2000,
+                        description:
+                            "A creamy and highly-pigmented lipstick that delivers rich, bold color in just one swipe. Its moisturizing formula keeps your lips hydrated while providing long-lasting wear. Available in a variety of shades, it adds a touch of glamour and confidence to your look.",
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0, bottom: 12.0),
+                      child: ProductCard(
+                        image: 'assets/images/eyeliner.jpg',
+                        name: 'Eyeliner',
+                        price: 650,
+                        originalPrice: 800,
+                        description:
+                            "This smooth and creamy eyeliner delivers bold, defined lines with precision. Its long-lasting formula is resistant to smudging, ensuring that your eye makeup stays in place throughout the day or night. ",
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0, bottom: 12.0),
+                      child: ProductCard(
+                        image: 'assets/images/shadow.jpg',
+                        name: 'Eye Shadow',
+                        price: 1500,
+                        originalPrice: 1800,
+                        description:
+                            "his versatile eyeshadow palette offers a wide range of vibrant, blendable shades perfect for creating any eye look. The formula is smooth and highly pigmented, allowing for rich, long-lasting color that won’t fade throughout the day.",
                       ),
                     ),
                     Padding(
@@ -98,26 +124,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ProductCard(
                         image: 'assets/images/body lotion.jpeg',
                         name: 'Body Lotion',
-                        price: 150,
-                        originalPrice: 200,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12.0, bottom: 12.0),
-                      child: ProductCard(
-                        image: 'assets/images/body lotion.jpeg',
-                        name: 'Body Lotion',
-                        price: 150,
-                        originalPrice: 200,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12.0, bottom: 12.0),
-                      child: ProductCard(
-                        image: 'assets/images/body lotion.jpeg',
-                        name: 'Body Lotion',
-                        price: 150,
-                        originalPrice: 200,
+                        price: 800,
+                        originalPrice: 900,
+                        description:
+                            "A rich, nourishing body lotion that moisturizes and softens your skin all day long. Enriched with vitamin E and natural oils, it provides deep hydration, leaving your skin feeling silky smooth and rejuvenated. Perfect for daily use to keep your skin soft and glowing",
                       ),
                     ),
                   ],
