@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cosmetic_supplies_application/services/api_service.dart';
 import 'package:cosmetic_supplies_application/widgets/product_card.dart';
+import 'package:cosmetic_supplies_application/widgets/product_filter.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -16,6 +17,30 @@ class _ProductsScreenState extends State<ProductsScreen> {
   void initState() {
     super.initState();
     _products = ApiService.fetchProducts();
+  }
+
+  void _showFilterBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (BuildContext context) {
+        return ProductFilter(
+          onCategorySelected: (id) {
+            setState(() {
+              _products = ApiService.fetchProductsByCategory(id);
+            });
+          },
+          onClear: () {
+            setState(() {
+              _products = ApiService.fetchProducts();
+            });
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -50,7 +75,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     ],
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: _showFilterBottomSheet,
                     icon: const Icon(Icons.filter_list, size: 28),
                   ),
                 ],

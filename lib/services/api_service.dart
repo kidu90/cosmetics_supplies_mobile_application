@@ -33,4 +33,17 @@ class ApiService {
       throw Exception("Failed to load categories: ${response.statusCode}");
     }
   }
+
+  //filter products by category
+  static Future<List<dynamic>> fetchProductsByCategory(int id) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/products/categories/$id'));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          "Failed to load products for category ID $id: ${response.statusCode}");
+    }
+  }
 }
