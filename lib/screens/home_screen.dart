@@ -81,9 +81,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.grey.shade200,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
                       child: const Text(
                         "View More",
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
                   ],
@@ -117,10 +128,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.only(
                                 left: 12.0, right: 12.0, bottom: 12.0),
                             child: ProductCard(
-                              image: product['image'] ?? '',
-                              name: product['name'] ?? '',
+                              id: product['id'],
+                              image: product['image'],
+                              name: product['name'],
                               price: product['price'].toString(),
-                              description: product['description'] ?? '',
+                              description: product['description'],
                             ),
                           );
                         }).toList(),

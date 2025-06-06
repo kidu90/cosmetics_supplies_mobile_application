@@ -4,16 +4,20 @@ class ProductDetailedScreen extends StatelessWidget {
   final String image;
   final String name;
   final double price;
-  final double originalPrice;
   final String description;
+  final int stock;
+  final String ingredients;
+  final String usageTips;
 
   const ProductDetailedScreen({
     super.key,
     required this.image,
     required this.name,
     required this.price,
-    required this.originalPrice,
     required this.description,
+    required this.stock,
+    required this.ingredients,
+    required this.usageTips,
   });
 
   @override
@@ -24,9 +28,14 @@ class ProductDetailedScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(image,
-                width: double.infinity, height: 300, fit: BoxFit.cover),
+            Image.network(
+              image,
+              width: double.infinity,
+              height: 300,
+              fit: BoxFit.cover,
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -40,29 +49,30 @@ class ProductDetailedScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        "\Rs.$price",
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        "\Rs.$originalPrice",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    "Rs. $price",
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "In stock: $stock",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.green,
+                    ),
                   ),
                   const SizedBox(height: 16),
+                  const Text(
+                    "Description",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   Text(
                     description,
                     style: const TextStyle(
@@ -70,45 +80,66 @@ class ProductDetailedScreen extends StatelessWidget {
                       color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Ingredients",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    ingredients,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Usage Tips",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    usageTips,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.grey[200],
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey[200],
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.remove),
+                              color: Colors.grey.shade500,
+                              splashRadius: 20,
                             ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.remove),
-                                  color: Colors.grey.shade500,
-                                  splashRadius: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  "1", // Default quantity
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(width: 8),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.add),
-                                  color: Colors.grey.shade500,
-                                  splashRadius: 20,
-                                ),
-                              ],
+                            const SizedBox(width: 8),
+                            const Text(
+                              "1",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.add),
+                              color: Colors.grey.shade500,
+                              splashRadius: 20,
+                            ),
+                          ],
+                        ),
                       ),
                       ElevatedButton(
                         onPressed: () {},

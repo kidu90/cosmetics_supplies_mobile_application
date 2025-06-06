@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cosmetic_supplies_application/services/api_service.dart';
+import 'package:cosmetic_supplies_application/screens/product_detailed_screen.dart';
 
 class ProductCard extends StatelessWidget {
+  final int id;
   final String? image;
   final String name;
   final String price;
@@ -8,6 +11,7 @@ class ProductCard extends StatelessWidget {
 
   const ProductCard({
     super.key,
+    required this.id,
     required this.image,
     required this.name,
     required this.price,
@@ -20,7 +24,7 @@ class ProductCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
         width: 200,
-        height: 300,
+        height: 320,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -38,7 +42,7 @@ class ProductCard extends StatelessWidget {
             ClipRRect(
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(16)),
-              child: image != null
+              child: image != null && image!.isNotEmpty
                   ? Image.network(
                       image!,
                       fit: BoxFit.cover,
@@ -68,13 +72,54 @@ class ProductCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     "Rs. $price",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.grey.shade200,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      onPressed: () async {
+                        try {
+                          final productData =
+                              await ApiService.fetchProductById(id);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetailedScreen(
+                                image: productData['image'],
+                                name: productData['name'],
+                                price: double.parse(productData['price']),
+                                description: productData['description'],
+                                stock: productData['stock'],
+                                ingredients: productData['ingredients'],
+                                usageTips: productData['usage_tips'],
+                              ),
+                            ),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Error loading product')),
+                          );
+                        }
+                      },
+                      child: const Text(
+                        "View Details",
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
                   ),
                 ],
