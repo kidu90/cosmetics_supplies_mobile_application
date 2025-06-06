@@ -61,7 +61,8 @@ class ProductCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start, // Ensures left alignment
                 children: [
                   Text(
                     name,
@@ -82,49 +83,47 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Center(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.grey.shade200,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.grey.shade300,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      onPressed: () async {
-                        try {
-                          final productData =
-                              await ApiService.fetchProductById(id);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductDetailedScreen(
-                                image: productData['image'],
-                                name: productData['name'],
-                                price: double.parse(productData['price']),
-                                description: productData['description'],
-                                stock: productData['stock'],
-                                ingredients: productData['ingredients'],
-                                usageTips: productData['usage_tips'],
-                              ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    onPressed: () async {
+                      try {
+                        final productData =
+                            await ApiService.fetchProductById(id);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailedScreen(
+                              image: productData['image'],
+                              name: productData['name'],
+                              price: double.parse(productData['price']),
+                              description: productData['description'],
+                              stock: productData['stock'],
+                              ingredients: productData['ingredients'],
+                              usageTips: productData['usage_tips'],
                             ),
-                          );
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Error loading product')),
-                          );
-                        }
-                      },
-                      child: const Text(
-                        "View Details",
-                        style: TextStyle(color: Colors.black),
-                      ),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Error loading product')),
+                        );
+                      }
+                    },
+                    child: const Text(
+                      "View Details",
+                      style: TextStyle(color: Colors.black),
                     ),
                   ),
                 ],
               ),
-            ),
+            )
           ],
         ),
       ),
