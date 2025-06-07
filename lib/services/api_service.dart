@@ -142,4 +142,20 @@ class ApiService {
     final token = await getAuthToken();
     return token != null;
   }
+
+
+  // method to get the user's name
+  static Future<String?> getUserName() async {
+    final token = await getAuthToken();
+    if (token != null) {
+      final response = await http.get(Uri.parse('$baseUrl/user'), headers: {'Authorization': 'Bearer $token'});
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['name'];
+      }
+    }
+    return null;
+  }
+
+  // method to get the user's email
 }

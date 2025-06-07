@@ -22,6 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
     _futureProducts = ApiService.fetchProducts();
   }
 
+  Future<String?> _getUserName() async {
+    return await ApiService.getUserName();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,18 +42,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Hey",
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          "Masha",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                        FutureBuilder<String?>(
+                          future: _getUserName(),
+                          builder: (context, snapshot) {
+                            return Text(
+                              snapshot.data ?? 'User',
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            );
+                          },
                         ),
                       ],
                     ),
