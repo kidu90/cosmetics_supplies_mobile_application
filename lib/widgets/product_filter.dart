@@ -93,7 +93,7 @@ class _ProductFilterState extends State<ProductFilter> {
               child: ElevatedButton(
                 onPressed: _clearFilters,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
+                  backgroundColor: Colors.grey[800],
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Clear Filters'),
