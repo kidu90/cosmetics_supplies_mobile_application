@@ -124,10 +124,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   } else {
                     final products = snapshot.data!;
+                    // Take only the first 4 products
+                    final limitedProducts = products.take(4).toList();
                     return SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: products.map((product) {
+                        children: limitedProducts.map((product) {
                           return Padding(
                             padding: const EdgeInsets.only(
                                 left: 12.0, right: 12.0, bottom: 12.0),

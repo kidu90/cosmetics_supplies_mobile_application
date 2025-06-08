@@ -3,6 +3,7 @@ import 'package:cosmetic_supplies_application/screens/home_screen.dart';
 import 'package:cosmetic_supplies_application/screens/cart.dart';
 import 'package:cosmetic_supplies_application/screens/favourite_screen.dart';
 import 'package:cosmetic_supplies_application/screens/profile_screen.dart';
+import 'package:cosmetic_supplies_application/screens/products_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
   final int currentIndex;
@@ -17,9 +18,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
   late int _selectedIndex;
 
   final List<Widget> _screens = [
-    HomeScreen(),
-    Cart(),
-    ProfileScreen(),
+    const HomeScreen(),
+    const ProductsScreen(),
+    const Cart(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -57,6 +59,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
           icon: Icon(Icons.home_outlined),
           activeIcon: Icon(Icons.home),
           label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_bag_outlined),
+          activeIcon: Icon(Icons.shopping_bag),
+          label: 'Products',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.shopping_cart_outlined),
