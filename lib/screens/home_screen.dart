@@ -62,11 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    Icon(
-                      Icons.search,
-                      size: 40,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
                   ],
                 ),
               ),

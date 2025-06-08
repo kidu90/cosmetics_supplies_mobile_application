@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cosmetic_supplies_application/widgets/bottom_nav.dart';
 import 'package:cosmetic_supplies_application/screens/login_screen.dart';
 import 'package:cosmetic_supplies_application/services/api_service.dart';
+import 'package:cosmetic_supplies_application/screens/my_orders_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -126,7 +127,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.shopping_bag_outlined,
                     title: 'My Orders',
                     onTap: () {
-                      // TODO: Navigate to orders
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyOrdersScreen(),
+                        ),
+                      );
                     },
                   ),
                   _buildMenuItem(
