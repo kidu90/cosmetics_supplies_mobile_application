@@ -37,7 +37,7 @@ class _CartState extends State<Cart> {
 
       setState(() {
         _cartItems = response['items'];
-        _subtotal = response['total'] ?? 0.0;
+        _subtotal = double.parse(response['total'].toString());
         _calculateTotals();
       });
     } catch (e) {
@@ -184,6 +184,7 @@ class _CartState extends State<Cart> {
   }
 
   Widget _buildCartItem(Map<String, dynamic> item) {
+    final price = double.parse(item['price'].toString());
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       color: Colors.white,
@@ -224,7 +225,7 @@ class _CartState extends State<Cart> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Rs. ${item['price']}',
+                    'Rs. ${price.toStringAsFixed(2)}',
                     style: TextStyle(
                       color: Colors.grey[700],
                       fontWeight: FontWeight.w500,

@@ -49,34 +49,40 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Future<void> _loadCartItems() async {
+    if (!mounted) return;
+
     setState(() {
       _isLoading = true;
     });
 
     try {
       final response = await ApiService.getCart();
+      if (!mounted) return;
+
       setState(() {
         _cartItems = response['items'];
-        _subtotal = response['total'];
+        _subtotal = double.parse(response['total'].toString());
         _calculateTotals();
       });
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading cart: $e')),
-        );
-      }
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading cart: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   void _calculateTotals() {
-    _subtotal = _cartItems.fold(0, (sum, item) {
-      return sum + (item['price'] * item['quantity']);
-    });
     _tax = _subtotal * 0.1;
     _total = _subtotal + _shipping + _tax;
   }
@@ -179,6 +185,148 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
+  Widget _buildCartItem(Map<String, dynamic> item) {
+    final price = double.parse(item['price'].toString());
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      color: Colors.white,
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                item['product']['image'] ?? '',
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.grey[200],
+                    child: Icon(Icons.image, size: 32, color: Colors.grey[400]),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item['product']['name'],
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Rs. ${price.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Quantity: ${item['quantity']}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrderSummary() {
+    return Card(
+      color: Colors.white,
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Order Summary',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Subtotal:', style: TextStyle(color: Colors.grey[700])),
+                Text(
+                  'Rs. ${_subtotal.toStringAsFixed(2)}',
+                  style: TextStyle(color: Colors.grey[800]),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Shipping:', style: TextStyle(color: Colors.grey[700])),
+                Text(
+                  'Rs. ${_shipping.toStringAsFixed(2)}',
+                  style: TextStyle(color: Colors.grey[800]),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Tax (10%):', style: TextStyle(color: Colors.grey[700])),
+                Text(
+                  'Rs. ${_tax.toStringAsFixed(2)}',
+                  style: TextStyle(color: Colors.grey[800]),
+                ),
+              ],
+            ),
+            const Divider(color: Colors.grey),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Total:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                Text(
+                  'Rs. ${_total.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.grey[800],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,59 +354,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       itemCount: _cartItems.length,
                       itemBuilder: (context, index) {
                         final item = _cartItems[index];
-                        return ListTile(
-                          title: Text(item['product']['name']),
-                          subtitle: Text('Quantity: ${item['quantity']}'),
-                          trailing: Text(
-                            'Rs. ${(item['price'] * item['quantity']).toStringAsFixed(2)}',
-                          ),
-                        );
+                        return _buildCartItem(item);
                       },
                     ),
-                    const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Subtotal:'),
-                        Text('Rs. ${_subtotal.toStringAsFixed(2)}'),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Shipping:'),
-                        Text('Rs. ${_shipping.toStringAsFixed(2)}'),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Tax (10%):'),
-                        Text('Rs. ${_tax.toStringAsFixed(2)}'),
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Total:',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          'Rs. ${_total.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
+                    const SizedBox(height: 24),
+                    _buildOrderSummary(),
                     const SizedBox(height: 24),
                     const Text(
                       'Shipping Information',
