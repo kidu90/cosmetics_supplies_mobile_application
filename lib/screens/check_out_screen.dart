@@ -54,9 +54,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     });
 
     try {
-      final cartItems = await ApiService.getCart();
+      final response = await ApiService.getCart();
       setState(() {
-        _cartItems = cartItems;
+        _cartItems = response['items'];
+        _subtotal = response['total'];
         _calculateTotals();
       });
     } catch (e) {

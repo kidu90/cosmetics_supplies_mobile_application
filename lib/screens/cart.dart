@@ -25,33 +25,40 @@ class _CartState extends State<Cart> {
   }
 
   Future<void> _loadCartItems() async {
+    if (!mounted) return;
+
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final items = await ApiService.getCart();
+      final response = await ApiService.getCart();
+      if (!mounted) return;
+
       setState(() {
-        _cartItems = items;
+        _cartItems = response['items'];
+        _subtotal = response['total'] ?? 0.0;
         _calculateTotals();
       });
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading cart: $e')),
-        );
-      }
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading cart: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   void _calculateTotals() {
-    _subtotal = _cartItems.fold(0, (sum, item) {
-      return sum + (item['price'] * item['quantity']);
-    });
     _tax = _subtotal * 0.1;
     _total = _subtotal + _shipping + _tax;
   }
@@ -61,11 +68,14 @@ class _CartState extends State<Cart> {
       await ApiService.updateCartItem(cartId, quantity);
       await _loadCartItems(); // Reload cart items after update
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating quantity: $e')),
-        );
-      }
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error updating quantity: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -74,11 +84,14 @@ class _CartState extends State<Cart> {
       await ApiService.removeFromCart(cartId);
       await _loadCartItems(); // Reload cart items after removal
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error removing item: $e')),
-        );
-      }
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error removing item: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -88,55 +101,65 @@ class _CartState extends State<Cart> {
       appBar: AppBar(
         title: const Text('Cart'),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _cartItems.isEmpty
-              ? const Center(
-                  child: Text(
-                    'Your cart is empty',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Cart',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+      body: Column(
+        children: [
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _cartItems.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'Your cart is empty',
+                          style: TextStyle(fontSize: 18),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      ..._cartItems.map((item) => _buildCartItem(item)),
-                      const SizedBox(height: 24),
-                      _buildCartSummary(),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CheckoutScreen(),
+                      )
+                    : SingleChildScrollView(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Cart',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: const Text(
-                            'Proceed to Checkout',
-                            style: TextStyle(fontSize: 16),
-                          ),
+                            ),
+                            const SizedBox(height: 16),
+                            ..._cartItems.map((item) => _buildCartItem(item)),
+                            const SizedBox(height: 24),
+                            _buildCartSummary(),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _cartItems.isEmpty
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CheckoutScreen(),
+                          ),
+                        );
+                      },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
+                child: const Text(
+                  'Proceed to Checkout',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       bottomNavigationBar: const BottomNavBar(currentIndex: 1),
     );
   }
@@ -179,7 +202,7 @@ class _CartState extends State<Cart> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Rs. ${item['price'].toStringAsFixed(2)}',
+                    'Rs. ${item['price']}',
                     style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.w500,

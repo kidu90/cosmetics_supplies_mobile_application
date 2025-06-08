@@ -178,23 +178,24 @@ class ApiService {
   }
 
   // Cart endpoints
-  static Future<List<dynamic>> getCart() async {
+  static Future<Map<String, dynamic>> getCart() async {
     final token = await getAuthToken();
-    final sessionId = await getSessionId();
-    if (token == null && sessionId == null)
-      throw Exception('Not authenticated');
+    if (token == null) throw Exception('Not authenticated');
 
     final response = await http.get(
       Uri.parse('$baseUrl/cart'),
       headers: {
-        if (token != null) 'Authorization': 'Bearer $token',
-        if (sessionId != null) 'X-Session-ID': sessionId,
+        'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final data = jsonDecode(response.body);
+      return {
+        'items': data['cart_items'] ?? [],
+        'total': data['total'] ?? 0.0,
+      };
     } else {
       throw Exception("Failed to fetch cart: ${response.body}");
     }
@@ -202,15 +203,12 @@ class ApiService {
 
   static Future<void> addToCart(int productId, int quantity) async {
     final token = await getAuthToken();
-    final sessionId = await getSessionId();
-    if (token == null && sessionId == null)
-      throw Exception('Not authenticated');
+    if (token == null) throw Exception('Not authenticated');
 
     final response = await http.post(
       Uri.parse('$baseUrl/cart/add'),
       headers: {
-        if (token != null) 'Authorization': 'Bearer $token',
-        if (sessionId != null) 'X-Session-ID': sessionId,
+        'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
@@ -219,22 +217,28 @@ class ApiService {
       }),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['success'] != null) {
+        return;
+      }
+      throw Exception(data['error'] ?? 'Failed to add to cart');
+    } else if (response.statusCode == 400) {
+      final error = jsonDecode(response.body);
+      throw Exception(error['error'] ?? 'Failed to add to cart');
+    } else {
       throw Exception("Failed to add to cart: ${response.body}");
     }
   }
 
-  static Future<void> updateCartItem(int id, int quantity) async {
+  static Future<void> updateCartItem(int cartId, int quantity) async {
     final token = await getAuthToken();
-    final sessionId = await getSessionId();
-    if (token == null && sessionId == null)
-      throw Exception('Not authenticated');
+    if (token == null) throw Exception('Not authenticated');
 
     final response = await http.put(
-      Uri.parse('$baseUrl/cart/update/$id'),
+      Uri.parse('$baseUrl/cart/$cartId'),
       headers: {
-        if (token != null) 'Authorization': 'Bearer $token',
-        if (sessionId != null) 'X-Session-ID': sessionId,
+        'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
@@ -242,42 +246,51 @@ class ApiService {
       }),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['success'] != null) {
+        return;
+      }
+      throw Exception(data['error'] ?? 'Failed to update cart');
+    } else if (response.statusCode == 400) {
+      final error = jsonDecode(response.body);
+      throw Exception(error['error'] ?? 'Failed to update cart');
+    } else {
       throw Exception("Failed to update cart: ${response.body}");
     }
   }
 
-  static Future<void> removeFromCart(int id) async {
+  static Future<void> removeFromCart(int cartId) async {
     final token = await getAuthToken();
-    final sessionId = await getSessionId();
-    if (token == null && sessionId == null)
-      throw Exception('Not authenticated');
+    if (token == null) throw Exception('Not authenticated');
 
     final response = await http.delete(
-      Uri.parse('$baseUrl/cart/remove/$id'),
+      Uri.parse('$baseUrl/cart/$cartId'),
       headers: {
-        if (token != null) 'Authorization': 'Bearer $token',
-        if (sessionId != null) 'X-Session-ID': sessionId,
+        'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['success'] != null) {
+        return;
+      }
+      throw Exception(data['error'] ?? 'Failed to remove from cart');
+    } else {
       throw Exception("Failed to remove from cart: ${response.body}");
     }
   }
 
   static Future<int> getCartCount() async {
     final token = await getAuthToken();
-    final sessionId = await getSessionId();
-    if (token == null && sessionId == null)
-      throw Exception('Not authenticated');
+    if (token == null) throw Exception('Not authenticated');
 
     final response = await http.get(
       Uri.parse('$baseUrl/cart/count'),
       headers: {
-        if (token != null) 'Authorization': 'Bearer $token',
-        if (sessionId != null) 'X-Session-ID': sessionId,
+        'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
     );
