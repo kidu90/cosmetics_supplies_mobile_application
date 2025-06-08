@@ -1,48 +1,297 @@
-import 'package:cosmetic_supplies_application/widgets/cart_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:cosmetic_supplies_application/widgets/bottom_nav.dart';
-import 'package:cosmetic_supplies_application/widgets/cart_item.dart';
+import 'package:cosmetic_supplies_application/services/api_service.dart';
+import 'package:cosmetic_supplies_application/screens/check_out_screen.dart';
 
-class Cart extends StatelessWidget {
+class Cart extends StatefulWidget {
   const Cart({super.key});
+
+  @override
+  State<Cart> createState() => _CartState();
+}
+
+class _CartState extends State<Cart> {
+  bool _isLoading = true;
+  List<dynamic> _cartItems = [];
+  double _subtotal = 0;
+  double _shipping = 500;
+  double _tax = 0;
+  double _total = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCartItems();
+  }
+
+  Future<void> _loadCartItems() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final items = await ApiService.getCart();
+      setState(() {
+        _cartItems = items;
+        _calculateTotals();
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading cart: $e')),
+        );
+      }
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _calculateTotals() {
+    _subtotal = _cartItems.fold(0, (sum, item) {
+      return sum + (item['price'] * item['quantity']);
+    });
+    _tax = _subtotal * 0.1;
+    _total = _subtotal + _shipping + _tax;
+  }
+
+  Future<void> _updateQuantity(int cartId, int quantity) async {
+    try {
+      await ApiService.updateCartItem(cartId, quantity);
+      await _loadCartItems(); // Reload cart items after update
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating quantity: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _removeItem(int cartId) async {
+    try {
+      await ApiService.removeFromCart(cartId);
+      await _loadCartItems(); // Reload cart items after removal
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error removing item: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: AppBar(
+        title: const Text('Cart'),
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _cartItems.isEmpty
+              ? const Center(
+                  child: Text(
+                    'Your cart is empty',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                )
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Cart',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ..._cartItems.map((item) => _buildCartItem(item)),
+                      const SizedBox(height: 24),
+                      _buildCartSummary(),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CheckoutScreen(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: const Text(
+                            'Proceed to Checkout',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+      bottomNavigationBar: const BottomNavBar(currentIndex: 1),
+    );
+  }
+
+  Widget _buildCartItem(Map<String, dynamic> item) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
           children: [
-            Text(
-              'Cart',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                item['product']['image'] ?? '',
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, size: 32),
+                  );
+                },
               ),
             ),
-            SizedBox(height: 10),
-            CartItem(
-              name: 'Lipstick',
-              price: 200,
-              quantity: 1,
-              image: 'assets/images/mattlips.webp',
-            ),
-            CartItem(
-              name: 'Eyeliner',
-              price: 150,
-              quantity: 2,
-              image: 'assets/images/body lotion.jpeg',
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: CartSummary(),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item['product']['name'],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Rs. ${item['price'].toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          if (item['quantity'] > 1) {
+                            _updateQuantity(item['id'], item['quantity'] - 1);
+                          }
+                        },
+                        icon: const Icon(Icons.remove_circle_outline),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text(
+                          item['quantity'].toString(),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          _updateQuantity(item['id'], item['quantity'] + 1);
+                        },
+                        icon: const Icon(Icons.add_circle_outline),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () => _removeItem(item['id']),
+                        icon: const Icon(Icons.delete_outline),
+                        color: Colors.red,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBar(currentIndex: 1),
+    );
+  }
+
+  Widget _buildCartSummary() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Order Summary',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Subtotal:'),
+                Text('Rs. ${_subtotal.toStringAsFixed(2)}'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Shipping:'),
+                Text('Rs. ${_shipping.toStringAsFixed(2)}'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Tax (10%):'),
+                Text('Rs. ${_tax.toStringAsFixed(2)}'),
+              ],
+            ),
+            const Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Total:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  'Rs. ${_total.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

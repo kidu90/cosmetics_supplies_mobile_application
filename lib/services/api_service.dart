@@ -224,14 +224,14 @@ class ApiService {
     }
   }
 
-  static Future<void> updateCartItem(int cartId, int quantity) async {
+  static Future<void> updateCartItem(int id, int quantity) async {
     final token = await getAuthToken();
     final sessionId = await getSessionId();
     if (token == null && sessionId == null)
       throw Exception('Not authenticated');
 
     final response = await http.put(
-      Uri.parse('$baseUrl/cart/update/$cartId'),
+      Uri.parse('$baseUrl/cart/update/$id'),
       headers: {
         if (token != null) 'Authorization': 'Bearer $token',
         if (sessionId != null) 'X-Session-ID': sessionId,
@@ -247,14 +247,14 @@ class ApiService {
     }
   }
 
-  static Future<void> removeFromCart(int cartId) async {
+  static Future<void> removeFromCart(int id) async {
     final token = await getAuthToken();
     final sessionId = await getSessionId();
     if (token == null && sessionId == null)
       throw Exception('Not authenticated');
 
     final response = await http.delete(
-      Uri.parse('$baseUrl/cart/remove/$cartId'),
+      Uri.parse('$baseUrl/cart/remove/$id'),
       headers: {
         if (token != null) 'Authorization': 'Bearer $token',
         if (sessionId != null) 'X-Session-ID': sessionId,
@@ -291,12 +291,12 @@ class ApiService {
   }
 
   // Get reviews for a product
-  static Future<List<dynamic>> getProductReviews(int productId) async {
+  static Future<List<dynamic>> getProductReviews(int id) async {
     final token = await getAuthToken();
     if (token == null) throw Exception('Not authenticated');
 
     final response = await http.get(
-      Uri.parse('$baseUrl/products/$productId/reviews'),
+      Uri.parse('$baseUrl/products/$id/reviews'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -363,74 +363,80 @@ class ApiService {
     }
   }
 
-  // Delete a review
-  static Future<void> deleteReview(int reviewId) async {
+  // Order endpoints
+  static Future<List<dynamic>> getOrders() async {
     final token = await getAuthToken();
     if (token == null) throw Exception('Not authenticated');
 
-    final response = await http.delete(
-      Uri.parse('$baseUrl/reviews/$reviewId'),
+    final response = await http.get(
+      Uri.parse('$baseUrl/orders'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
     );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to delete review: ${response.body}');
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load orders: ${response.body}');
     }
   }
 
-  // Update a review
-  static Future<Map<String, dynamic>> updateReview({
-    required int reviewId,
-    required int rating,
-    required String comment,
-    File? photo,
+  static Future<Map<String, dynamic>> getOrderDetails(int orderId) async {
+    final token = await getAuthToken();
+    if (token == null) throw Exception('Not authenticated');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/orders/$orderId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load order details: ${response.body}');
+    }
+  }
+
+  static Future<Map<String, dynamic>> createOrder({
+    required String shippingName,
+    required String shippingEmail,
+    required String shippingPhone,
+    required String shippingAddress,
+    required String shippingCity,
+    required String shippingState,
+    required String shippingPostalCode,
+    String? notes,
   }) async {
     final token = await getAuthToken();
     if (token == null) throw Exception('Not authenticated');
 
-    // Create multipart request
-    var request = http.MultipartRequest(
-      'POST', // Using POST for multipart/form-data
-      Uri.parse('$baseUrl/reviews/$reviewId'),
+    final response = await http.post(
+      Uri.parse('$baseUrl/orders'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'shipping_name': shippingName,
+        'shipping_email': shippingEmail,
+        'shipping_phone': shippingPhone,
+        'shipping_address': shippingAddress,
+        'shipping_city': shippingCity,
+        'shipping_state': shippingState,
+        'shipping_postal_code': shippingPostalCode,
+        'notes': notes,
+      }),
     );
 
-    // Add authorization header
-    request.headers.addAll({
-      'Authorization': 'Bearer $token',
-    });
-
-    // Add text fields
-    request.fields.addAll({
-      '_method': 'PUT', // Laravel method spoofing
-      'rating': rating.toString(),
-      'comment': comment,
-    });
-
-    // Add photo if provided
-    if (photo != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'photo',
-          photo.path,
-        ),
-      );
-    }
-
-    try {
-      // Send the request
-      final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Failed to update review: ${response.body}');
-      }
-    } catch (e) {
-      throw Exception('Error updating review: $e');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to create order: ${response.body}');
     }
   }
 }

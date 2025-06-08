@@ -16,16 +16,15 @@ class ProductCard extends StatelessWidget {
     required this.name,
     required this.price,
     required this.description,
-    
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Container(
-        width: 200,
-        height: 320,
+        width: 180,
+        height: 300,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -47,30 +46,29 @@ class ProductCard extends StatelessWidget {
                   ? Image.network(
                       image!,
                       fit: BoxFit.cover,
-                      height: 200,
+                      height: 180,
                       width: double.infinity,
                       errorBuilder: (context, error, stackTrace) =>
                           const Icon(Icons.broken_image),
                     )
                   : Container(
-                      height: 200,
+                      height: 180,
                       width: double.infinity,
                       color: Colors.grey[300],
                       child: const Icon(Icons.image_not_supported),
                     ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start, // Ensures left alignment
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     name,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -78,7 +76,7 @@ class ProductCard extends StatelessWidget {
                   Text(
                     "Rs. $price",
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
                     ),
@@ -90,7 +88,8 @@ class ProductCard extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                     ),
                     onPressed: () async {
                       try {
@@ -117,7 +116,10 @@ class ProductCard extends StatelessWidget {
                     },
                     child: const Text(
                       "View Details",
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ],
