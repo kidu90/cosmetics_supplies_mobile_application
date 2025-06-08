@@ -7,6 +7,19 @@ class ApiService {
   static const String baseUrl = "http://127.0.0.1:8000/api";
   static const storage = FlutterSecureStorage(); // secure token storage
 
+  // Session ID methods
+  static Future<void> saveSessionId(String sessionId) async {
+    await storage.write(key: 'session_id', value: sessionId);
+  }
+
+  static Future<String?> getSessionId() async {
+    return await storage.read(key: 'session_id');
+  }
+
+  static Future<void> clearSessionId() async {
+    await storage.delete(key: 'session_id');
+  }
+
   // products
   static Future<List<dynamic>> fetchProducts() async {
     final response = await http.get(Uri.parse('$baseUrl/products'));
@@ -73,9 +86,12 @@ class ApiService {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      // Store the token if it's returned
+      // Store the token and session ID if they're returned
       if (data['token'] != null) {
         await storage.write(key: 'auth_token', value: data['token']);
+      }
+      if (data['session_id'] != null) {
+        await saveSessionId(data['session_id']);
       }
       return data;
     } else {
@@ -99,9 +115,12 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      // Store the token
+      // Store the token and session ID
       if (data['token'] != null) {
         await storage.write(key: 'auth_token', value: data['token']);
+      }
+      if (data['session_id'] != null) {
+        await saveSessionId(data['session_id']);
       }
       return data;
     } else {
@@ -113,7 +132,7 @@ class ApiService {
   static Future<void> logoutUser() async {
     try {
       final token = await storage.read(key: 'auth_token');
-      
+
       if (token != null) {
         final response = await http.post(
           Uri.parse('$baseUrl/logout'),
@@ -128,8 +147,9 @@ class ApiService {
         }
       }
     } finally {
-      // Always delete the token from storage
+      // Always delete the token and session ID from storage
       await storage.delete(key: 'auth_token');
+      await clearSessionId();
     }
   }
 
@@ -148,7 +168,8 @@ class ApiService {
   static Future<String?> getUserName() async {
     final token = await getAuthToken();
     if (token != null) {
-      final response = await http.get(Uri.parse('$baseUrl/user'), headers: {'Authorization': 'Bearer $token'});
+      final response = await http.get(Uri.parse('$baseUrl/user'),
+          headers: {'Authorization': 'Bearer $token'});
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return data['name'];
@@ -156,16 +177,18 @@ class ApiService {
     }
   }
 
-
   // Cart endpoints
   static Future<List<dynamic>> getCart() async {
     final token = await getAuthToken();
-    if (token == null) throw Exception('Not authenticated');
+    final sessionId = await getSessionId();
+    if (token == null && sessionId == null)
+      throw Exception('Not authenticated');
 
     final response = await http.get(
       Uri.parse('$baseUrl/cart'),
       headers: {
-        'Authorization': 'Bearer $token',
+        if (token != null) 'Authorization': 'Bearer $token',
+        if (sessionId != null) 'X-Session-ID': sessionId,
         'Content-Type': 'application/json',
       },
     );
@@ -179,12 +202,15 @@ class ApiService {
 
   static Future<void> addToCart(int productId, int quantity) async {
     final token = await getAuthToken();
-    if (token == null) throw Exception('Not authenticated');
+    final sessionId = await getSessionId();
+    if (token == null && sessionId == null)
+      throw Exception('Not authenticated');
 
     final response = await http.post(
       Uri.parse('$baseUrl/cart/add'),
       headers: {
-        'Authorization': 'Bearer $token',
+        if (token != null) 'Authorization': 'Bearer $token',
+        if (sessionId != null) 'X-Session-ID': sessionId,
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
@@ -200,12 +226,15 @@ class ApiService {
 
   static Future<void> updateCartItem(int cartId, int quantity) async {
     final token = await getAuthToken();
-    if (token == null) throw Exception('Not authenticated');
+    final sessionId = await getSessionId();
+    if (token == null && sessionId == null)
+      throw Exception('Not authenticated');
 
     final response = await http.put(
       Uri.parse('$baseUrl/cart/update/$cartId'),
       headers: {
-        'Authorization': 'Bearer $token',
+        if (token != null) 'Authorization': 'Bearer $token',
+        if (sessionId != null) 'X-Session-ID': sessionId,
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
@@ -220,12 +249,15 @@ class ApiService {
 
   static Future<void> removeFromCart(int cartId) async {
     final token = await getAuthToken();
-    if (token == null) throw Exception('Not authenticated');
+    final sessionId = await getSessionId();
+    if (token == null && sessionId == null)
+      throw Exception('Not authenticated');
 
     final response = await http.delete(
       Uri.parse('$baseUrl/cart/remove/$cartId'),
       headers: {
-        'Authorization': 'Bearer $token',
+        if (token != null) 'Authorization': 'Bearer $token',
+        if (sessionId != null) 'X-Session-ID': sessionId,
         'Content-Type': 'application/json',
       },
     );
@@ -237,12 +269,15 @@ class ApiService {
 
   static Future<int> getCartCount() async {
     final token = await getAuthToken();
-    if (token == null) throw Exception('Not authenticated');
+    final sessionId = await getSessionId();
+    if (token == null && sessionId == null)
+      throw Exception('Not authenticated');
 
     final response = await http.get(
       Uri.parse('$baseUrl/cart/count'),
       headers: {
-        'Authorization': 'Bearer $token',
+        if (token != null) 'Authorization': 'Bearer $token',
+        if (sessionId != null) 'X-Session-ID': sessionId,
         'Content-Type': 'application/json',
       },
     );
@@ -399,4 +434,3 @@ class ApiService {
     }
   }
 }
-

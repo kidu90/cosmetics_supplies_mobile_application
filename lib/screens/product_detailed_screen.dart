@@ -31,6 +31,8 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
   bool _isSubmitting = false;
   List<dynamic> _reviews = [];
   bool _isLoadingReviews = true;
+  int _quantity = 1;
+  bool _isAddingToCart = false;
 
   @override
   void initState() {
@@ -139,6 +141,31 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
     }
   }
 
+  Future<void> _addToCart() async {
+    setState(() {
+      _isAddingToCart = true;
+    });
+
+    try {
+      await ApiService.addToCart(widget.productId, _quantity);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Product added to cart successfully')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error adding to cart: $e')),
+        );
+      }
+    } finally {
+      setState(() {
+        _isAddingToCart = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,7 +181,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
               widget.image,
               height: 300,
               width: double.infinity,
-                fit: BoxFit.cover,
+              fit: BoxFit.cover,
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -183,6 +210,70 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                   Text(
                     widget.description,
                     style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 24),
+                  // Quantity Selector and Add to Cart
+                  Row(
+                    children: [
+                      // Quantity Selector
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove),
+                              onPressed: _quantity > 1
+                                  ? () {
+                                      setState(() {
+                                        _quantity--;
+                                      });
+                                    }
+                                  : null,
+                            ),
+                            Text(
+                              '$_quantity',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: () {
+                                setState(() {
+                                  _quantity++;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Add to Cart Button
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: _isAddingToCart ? null : _addToCart,
+                          icon: _isAddingToCart
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.shopping_cart),
+                          label: Text(
+                            _isAddingToCart ? 'Adding...' : 'Add to Cart',
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 32),
                   // Review Section
@@ -234,7 +325,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                         const SizedBox(width: 16),
                         Expanded(
                           child: Stack(
-                        children: [
+                            children: [
                               Image.file(
                                 _reviewImage!,
                                 height: 100,
@@ -252,9 +343,9 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                                     });
                                   },
                                 ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
                         ),
                       ],
                     ],
@@ -268,17 +359,17 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                       child: _isSubmitting
                           ? const CircularProgressIndicator()
                           : const Text('Submit Review'),
-                            ),
                     ),
+                  ),
                   const SizedBox(height: 32),
                   // Reviews List
-                    const Text(
+                  const Text(
                     'Customer Reviews',
-                      style: TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      fontWeight: FontWeight.bold,
                     ),
+                  ),
                   const SizedBox(height: 16),
                   if (_isLoadingReviews)
                     const Center(child: CircularProgressIndicator())
@@ -308,12 +399,12 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                                       ),
                                     ),
                                     const SizedBox(width: 8),
-                    Text(
+                                    Text(
                                       review['user']['name'],
                                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                     const Spacer(),
                                     Row(
                                       children: List.generate(5, (index) {
@@ -339,8 +430,8 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                                 ],
                                 const SizedBox(height: 8),
                                 Text(review['comment']),
-                    const SizedBox(height: 8),
-                    Text(
+                                const SizedBox(height: 8),
+                                Text(
                                   DateTime.parse(review['created_at'])
                                       .toString()
                                       .split('.')[0],
@@ -348,8 +439,8 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                                     color: Colors.grey[600],
                                     fontSize: 12,
                                   ),
-                    ),
-                  ],
+                                ),
+                              ],
                             ),
                           ),
                         );

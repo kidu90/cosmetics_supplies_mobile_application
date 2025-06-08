@@ -118,32 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 20),
               // Menu Items
-              _buildMenuSection(
-                'Account',
-                [
-                  _buildMenuItem(
-                    icon: Icons.person_outline,
-                    title: 'Edit Profile',
-                    onTap: () {
-                      // TODO: Navigate to edit profile
-                    },
-                  ),
-                  _buildMenuItem(
-                    icon: Icons.location_on_outlined,
-                    title: 'Shipping Addresses',
-                    onTap: () {
-                      // TODO: Navigate to addresses
-                    },
-                  ),
-                  _buildMenuItem(
-                    icon: Icons.payment_outlined,
-                    title: 'Payment Methods',
-                    onTap: () {
-                      // TODO: Navigate to payment methods
-                    },
-                  ),
-                ],
-              ),
+
               _buildMenuSection(
                 'Orders',
                 [
@@ -210,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavBar(currentIndex: 3),
+      bottomNavigationBar: BottomNavBar(currentIndex: 2),
     );
   }
 
