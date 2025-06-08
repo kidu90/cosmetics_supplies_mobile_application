@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.cosmetic_supplies_application"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

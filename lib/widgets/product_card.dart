@@ -16,6 +16,7 @@ class ProductCard extends StatelessWidget {
     required this.name,
     required this.price,
     required this.description,
+    
   });
 
   @override
@@ -99,13 +100,11 @@ class ProductCard extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ProductDetailedScreen(
-                              image: productData['image'],
+                              productId: productData['id'],
                               name: productData['name'],
-                              price: double.parse(productData['price']),
+                              price: productData['price'],
                               description: productData['description'],
-                              stock: productData['stock'],
-                              ingredients: productData['ingredients'],
-                              usageTips: productData['usage_tips'],
+                              image: productData['image'],
                             ),
                           ),
                         );
