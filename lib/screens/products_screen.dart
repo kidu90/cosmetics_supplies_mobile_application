@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cosmetic_supplies_application/services/api_service.dart';
 import 'package:cosmetic_supplies_application/widgets/product_card.dart';
 import 'package:cosmetic_supplies_application/widgets/product_filter.dart';
+import 'package:cosmetic_supplies_application/widgets/bottom_nav.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -125,6 +126,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(currentIndex: 1),
     );
   }
 }
