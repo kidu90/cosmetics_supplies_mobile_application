@@ -476,4 +476,25 @@ class ApiService {
       throw Exception('Failed to create order: ${response.body}');
     }
   }
+
+  static Future<List<dynamic>> searchProducts(String query) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/products/search?q=$query'),
+        headers: {
+          'Content-Type': 'application/json',
+        }, // No auth header for public endpoint
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data;
+      } else {
+        final error = json.decode(response.body);
+        throw Exception(error['message'] ?? 'Failed to search products');
+      }
+    } catch (e) {
+      throw Exception('Error searching products: $e');
+    }
+  }
 }
