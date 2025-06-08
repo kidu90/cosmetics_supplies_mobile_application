@@ -98,19 +98,33 @@ class _CartState extends State<Cart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Cart'),
+        backgroundColor: Colors.grey[200],
+        title: Text(
+          'Cart',
+          style: TextStyle(color: Colors.grey[800]),
+        ),
+        elevation: 0,
       ),
       body: Column(
         children: [
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.grey[700]!),
+                    ),
+                  )
                 : _cartItems.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Text(
                           'Your cart is empty',
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       )
                     : SingleChildScrollView(
@@ -118,11 +132,12 @@ class _CartState extends State<Cart> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Cart',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.grey[800],
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -149,11 +164,15 @@ class _CartState extends State<Cart> {
                         );
                       },
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[300],
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text(
+                child: Text(
                   'Proceed to Checkout',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[800],
+                  ),
                 ),
               ),
             ),
@@ -167,6 +186,8 @@ class _CartState extends State<Cart> {
   Widget _buildCartItem(Map<String, dynamic> item) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
+      color: Colors.white,
+      elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
@@ -182,8 +203,8 @@ class _CartState extends State<Cart> {
                   return Container(
                     width: 80,
                     height: 80,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.image, size: 32),
+                    color: Colors.grey[200],
+                    child: Icon(Icons.image, size: 32, color: Colors.grey[400]),
                   );
                 },
               ),
@@ -195,16 +216,17 @@ class _CartState extends State<Cart> {
                 children: [
                   Text(
                     item['product']['name'],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
+                      color: Colors.grey[800],
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Rs. ${item['price']}',
-                    style: const TextStyle(
-                      color: Colors.blue,
+                    style: TextStyle(
+                      color: Colors.grey[700],
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -217,7 +239,8 @@ class _CartState extends State<Cart> {
                             _updateQuantity(item['id'], item['quantity'] - 1);
                           }
                         },
-                        icon: const Icon(Icons.remove_circle_outline),
+                        icon: Icon(Icons.remove_circle_outline,
+                            color: Colors.grey[700]),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -225,22 +248,26 @@ class _CartState extends State<Cart> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Text(
                           item['quantity'].toString(),
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[800],
+                          ),
                         ),
                       ),
                       IconButton(
                         onPressed: () {
                           _updateQuantity(item['id'], item['quantity'] + 1);
                         },
-                        icon: const Icon(Icons.add_circle_outline),
+                        icon: Icon(Icons.add_circle_outline,
+                            color: Colors.grey[700]),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
                       const Spacer(),
                       IconButton(
                         onPressed: () => _removeItem(item['id']),
-                        icon: const Icon(Icons.delete_outline),
-                        color: Colors.red,
+                        icon:
+                            Icon(Icons.delete_outline, color: Colors.grey[700]),
                       ),
                     ],
                   ),
@@ -255,59 +282,72 @@ class _CartState extends State<Cart> {
 
   Widget _buildCartSummary() {
     return Card(
+      color: Colors.white,
+      elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Order Summary',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
               ),
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Subtotal:'),
-                Text('Rs. ${_subtotal.toStringAsFixed(2)}'),
+                Text('Subtotal:', style: TextStyle(color: Colors.grey[700])),
+                Text(
+                  'Rs. ${_subtotal.toStringAsFixed(2)}',
+                  style: TextStyle(color: Colors.grey[800]),
+                ),
               ],
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Shipping:'),
-                Text('Rs. ${_shipping.toStringAsFixed(2)}'),
+                Text('Shipping:', style: TextStyle(color: Colors.grey[700])),
+                Text(
+                  'Rs. ${_shipping.toStringAsFixed(2)}',
+                  style: TextStyle(color: Colors.grey[800]),
+                ),
               ],
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Tax (10%):'),
-                Text('Rs. ${_tax.toStringAsFixed(2)}'),
+                Text('Tax (10%):', style: TextStyle(color: Colors.grey[700])),
+                Text(
+                  'Rs. ${_tax.toStringAsFixed(2)}',
+                  style: TextStyle(color: Colors.grey[800]),
+                ),
               ],
             ),
-            const Divider(),
+            const Divider(color: Colors.grey),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Total:',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
+                    color: Colors.grey[800],
                   ),
                 ),
                 Text(
                   'Rs. ${_total.toStringAsFixed(2)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
-                    color: Colors.blue,
+                    color: Colors.grey[800],
                   ),
                 ),
               ],

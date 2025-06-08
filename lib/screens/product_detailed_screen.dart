@@ -33,6 +33,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
   bool _isLoadingReviews = true;
   int _quantity = 1;
   bool _isAddingToCart = false;
+  String? _reviewError;
 
   @override
   void initState() {
@@ -48,20 +49,21 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
 
   Future<void> _loadReviews() async {
     try {
-      final reviews = await ApiService.getProductReviews(widget.productId);
       setState(() {
-        _reviews = reviews;
+        _isLoadingReviews = true;
+        _reviewError = null;
+      });
+
+      final response = await ApiService.getProductReviews(widget.productId);
+      setState(() {
+        _reviews = response['reviews'] ?? [];
         _isLoadingReviews = false;
       });
     } catch (e) {
       setState(() {
+        _reviewError = e.toString();
         _isLoadingReviews = false;
       });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading reviews: $e')),
-        );
-      }
     }
   }
 
@@ -94,29 +96,23 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
       return;
     }
 
-    if (_commentController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a comment')),
-      );
-      return;
-    }
-
-    setState(() {
-      _isSubmitting = true;
-    });
-
     try {
+      setState(() {
+        _isSubmitting = true;
+        _reviewError = null;
+      });
+
       await ApiService.submitReview(
         productId: widget.productId,
         rating: _rating,
-        comment: _commentController.text.trim(),
+        comment: _commentController.text,
         photo: _reviewImage,
       );
 
-      // Reset form
+      // Clear form
+      _rating = 0;
+      _commentController.clear();
       setState(() {
-        _rating = 0;
-        _commentController.clear();
         _reviewImage = null;
         _isSubmitting = false;
       });
@@ -131,6 +127,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
       }
     } catch (e) {
       setState(() {
+        _reviewError = e.toString();
         _isSubmitting = false;
       });
       if (mounted) {
@@ -169,8 +166,11 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.grey[200],
         title: Text(widget.name),
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -183,7 +183,8 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
               width: double.infinity,
               fit: BoxFit.cover,
             ),
-            Padding(
+            Container(
+              color: Colors.grey[100],
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,14 +195,15 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '\$${widget.price}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
-                      color: Colors.green,
+                      color: Colors.grey[800],
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -209,7 +211,10 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                   // Product Description
                   Text(
                     widget.description,
-                    style: const TextStyle(fontSize: 16),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[700],
+                    ),
                   ),
                   const SizedBox(height: 24),
                   // Quantity Selector and Add to Cart
@@ -218,13 +223,14 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                       // Quantity Selector
                       Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey[300]!),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.remove),
+                              icon: Icon(Icons.remove, color: Colors.grey[700]),
                               onPressed: _quantity > 1
                                   ? () {
                                       setState(() {
@@ -235,13 +241,14 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                             ),
                             Text(
                               '$_quantity',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.grey[800],
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.add),
+                              icon: Icon(Icons.add, color: Colors.grey[700]),
                               onPressed: () {
                                 setState(() {
                                   _quantity++;
@@ -262,6 +269,8 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
                                   ),
                                 )
                               : const Icon(Icons.shopping_cart),
@@ -269,6 +278,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                             _isAddingToCart ? 'Adding...' : 'Add to Cart',
                           ),
                           style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey[300],
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                         ),
@@ -277,11 +287,12 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                   ),
                   const SizedBox(height: 32),
                   // Review Section
-                  const Text(
+                  Text(
                     'Write a Review',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: Colors.grey[800],
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -291,7 +302,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                       return IconButton(
                         icon: Icon(
                           index < _rating ? Icons.star : Icons.star_border,
-                          color: Colors.amber,
+                          color: Colors.yellow,
                           size: 32,
                         ),
                         onPressed: () {
@@ -307,9 +318,20 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                   TextField(
                     controller: _commentController,
                     maxLines: 3,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Write your review here...',
-                      border: OutlineInputBorder(),
+                      hintStyle: TextStyle(color: Colors.grey[400]),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey[600]!),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -318,8 +340,14 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                     children: [
                       ElevatedButton.icon(
                         onPressed: _pickImage,
-                        icon: const Icon(Icons.image),
-                        label: const Text('Add Photo'),
+                        icon: Icon(Icons.image, color: Colors.grey[700]),
+                        label: Text(
+                          'Add Photo',
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[200],
+                        ),
                       ),
                       if (_reviewImage != null) ...[
                         const SizedBox(width: 16),
@@ -336,7 +364,8 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                                 right: 0,
                                 top: 0,
                                 child: IconButton(
-                                  icon: const Icon(Icons.close),
+                                  icon: Icon(Icons.close,
+                                      color: Colors.grey[700]),
                                   onPressed: () {
                                     setState(() {
                                       _reviewImage = null;
@@ -356,26 +385,42 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _isSubmitting ? null : _submitReview,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
                       child: _isSubmitting
-                          ? const CircularProgressIndicator()
+                          ? const CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            )
                           : const Text('Submit Review'),
                     ),
                   ),
                   const SizedBox(height: 32),
                   // Reviews List
-                  const Text(
+                  Text(
                     'Customer Reviews',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: Colors.grey[800],
                     ),
                   ),
                   const SizedBox(height: 16),
                   if (_isLoadingReviews)
-                    const Center(child: CircularProgressIndicator())
+                    Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.grey[700]!),
+                      ),
+                    )
                   else if (_reviews.isEmpty)
-                    const Center(
-                      child: Text('No reviews yet. Be the first to review!'),
+                    Center(
+                      child: Text(
+                        'No reviews yet. Be the first to review!',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
                     )
                   else
                     ListView.builder(
@@ -384,71 +429,93 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen> {
                       itemCount: _reviews.length,
                       itemBuilder: (context, index) {
                         final review = _reviews[index];
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    CircleAvatar(
-                                      child: Text(
-                                        review['user']['name'][0].toUpperCase(),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      review['user']['name'],
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Row(
-                                      children: List.generate(5, (index) {
-                                        return Icon(
-                                          index < review['rating']
-                                              ? Icons.star
-                                              : Icons.star_border,
-                                          color: Colors.amber,
-                                          size: 16,
-                                        );
-                                      }),
-                                    ),
-                                  ],
-                                ),
-                                if (review['image'] != null) ...[
-                                  const SizedBox(height: 8),
-                                  Image.network(
-                                    review['image'],
-                                    height: 200,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ],
-                                const SizedBox(height: 8),
-                                Text(review['comment']),
-                                const SizedBox(height: 8),
-                                Text(
-                                  DateTime.parse(review['created_at'])
-                                      .toString()
-                                      .split('.')[0],
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+                        return _buildReviewItem(review);
                       },
                     ),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReviewItem(Map<String, dynamic> review) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      color: Colors.white,
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.person, size: 24, color: Colors.grey[700]),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        review['user_name'] ?? 'Anonymous User',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      Text(
+                        DateTime.parse(review['created_at'])
+                            .toString()
+                            .split('.')[0],
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      Icons.star,
+                      size: 20,
+                      color: index < review['rating']
+                          ? Colors.yellow
+                          : Colors.yellow[200],
+                    );
+                  }),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              review['comment'],
+              style: TextStyle(color: Colors.grey[700]),
+            ),
+            if (review['image'] != null) ...[
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  '${ApiService.baseUrl}/review/image/${review['image']}',
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
+                      color: Colors.grey[200],
+                      child: Icon(Icons.error_outline, color: Colors.grey[400]),
+                    );
+                  },
+                ),
+              ),
+            ],
           ],
         ),
       ),

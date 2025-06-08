@@ -143,7 +143,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     });
 
     try {
-      await ApiService.createOrder(
+      final response = await ApiService.createOrder(
         shippingName: _nameController.text,
         shippingEmail: _emailController.text,
         shippingPhone: _phoneController.text,
@@ -156,14 +156,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Order placed successfully!')),
+          SnackBar(
+            content: Text(response['message'] ?? 'Order placed successfully!'),
+            backgroundColor: Colors.green,
+          ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error placing order: $e')),
+          SnackBar(
+            content: Text('Error placing order: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {

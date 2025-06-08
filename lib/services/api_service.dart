@@ -304,12 +304,12 @@ class ApiService {
   }
 
   // Get reviews for a product
-  static Future<List<dynamic>> getProductReviews(int id) async {
+  static Future<Map<String, dynamic>> getProductReviews(int productId) async {
     final token = await getAuthToken();
     if (token == null) throw Exception('Not authenticated');
 
     final response = await http.get(
-      Uri.parse('$baseUrl/products/$id/reviews'),
+      Uri.parse('$baseUrl/products/$productId/reviews'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -317,7 +317,15 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final data = jsonDecode(response.body);
+      if (data['reviews'] != null) {
+        for (var review in data['reviews']) {
+          if (review['user'] != null) {
+            review['user_name'] = review['user']['name'];
+          }
+        }
+      }
+      return data;
     } else {
       throw Exception('Failed to load reviews: ${response.body}');
     }
@@ -333,7 +341,6 @@ class ApiService {
     final token = await getAuthToken();
     if (token == null) throw Exception('Not authenticated');
 
-    // Create multipart request
     var request = http.MultipartRequest(
       'POST',
       Uri.parse('$baseUrl/reviews'),
@@ -377,7 +384,7 @@ class ApiService {
   }
 
   // Order endpoints
-  static Future<List<dynamic>> getOrders() async {
+  static Future<Map<String, dynamic>> getOrders() async {
     final token = await getAuthToken();
     if (token == null) throw Exception('Not authenticated');
 
@@ -390,7 +397,11 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final data = jsonDecode(response.body);
+      if (data['success'] == true) {
+        return data;
+      }
+      throw Exception(data['error'] ?? 'Failed to load orders');
     } else {
       throw Exception('Failed to load orders: ${response.body}');
     }
@@ -409,7 +420,13 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final data = jsonDecode(response.body);
+      if (data['success'] == true) {
+        return data;
+      }
+      throw Exception(data['error'] ?? 'Failed to load order details');
+    } else if (response.statusCode == 403) {
+      throw Exception('Unauthorized access to order details');
     } else {
       throw Exception('Failed to load order details: ${response.body}');
     }
@@ -447,7 +464,14 @@ class ApiService {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return jsonDecode(response.body);
+      final data = jsonDecode(response.body);
+      if (data['success'] == true) {
+        return data;
+      }
+      throw Exception(data['error'] ?? 'Failed to create order');
+    } else if (response.statusCode == 400) {
+      final error = jsonDecode(response.body);
+      throw Exception(error['error'] ?? 'Failed to create order');
     } else {
       throw Exception('Failed to create order: ${response.body}');
     }
